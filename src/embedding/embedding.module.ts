@@ -10,6 +10,9 @@ import { OpenAiEmbeddingService } from './services/openai-embedding.service';
       useClass: OpenAiEmbeddingService,
     },
   ],
-  exports: [EmbeddingService],
+  exports: [
+    EmbeddingService,
+    'EmbeddingProvider', 
+  ],
 })
 export class EmbeddingModule {}
