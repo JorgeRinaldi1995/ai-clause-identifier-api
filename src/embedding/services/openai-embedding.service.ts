@@ -4,6 +4,7 @@ import type { EmbeddingProvider } from './embedding.interface';
 @Injectable()
 export class OpenAiEmbeddingService implements EmbeddingProvider {
   private readonly endpoint = 'https://api.openai.com/v1/embeddings';
+  private readonly api_key = process.env.OPEN_AI_KEY
 
   async embed(text: string): Promise<number[]> {
     console.log('Text on embed method ::::', text);
@@ -14,7 +15,7 @@ export class OpenAiEmbeddingService implements EmbeddingProvider {
     const response = await fetch(this.endpoint, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer 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`,
+        'Authorization': `Bearer ${this.api_key}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
