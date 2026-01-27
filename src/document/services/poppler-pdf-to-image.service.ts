@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { exec } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import { PdfToImageInterface } from './pdf-to-image.interface';
+import { PdfToImageInterface } from '../interfaces/pdf-to-image.interface';
 
 @Injectable()
 export class PopplerPdfToImageService implements PdfToImageInterface {

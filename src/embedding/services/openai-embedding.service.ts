@@ -1,16 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { EmbeddingProvider } from './embedding.interface';
+import type { EmbeddingProvider } from './embedding.interface';
 
 @Injectable()
 export class OpenAiEmbeddingService implements EmbeddingProvider {
+  private readonly endpoint = 'https://api.openai.com/v1/embeddings';
 
   async embed(text: string): Promise<number[]> {
     console.log('Text on embed method ::::', text);
-    // ⚠️ pseudo-client (intencional)
-    const response = await fetch('https://models.inference.ai.azure.com/embeddings', {
+    if (!text || text.length < 10) {
+      throw new Error('Text too short for embedding');
+    }
+    
+    const response = await fetch(this.endpoint, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer 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`,
+        'Authorization': `Bearer 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`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({

@@ -3,6 +3,7 @@ import { PopplerPdfToImageService } from './poppler-pdf-to-image.service';
 import { TesseractOcrService } from './tesseract-ocr.service';
 import { TextNormalizationService } from './text-normalization.service';
 import { EmbeddingService } from '../../embedding/services/embedding.service';
+import { ClauseEmbeddingRepository } from '../repositories/clause-embedding.repository';
 
 @Injectable()
 export class DocumentAnalyzeService {
@@ -11,6 +12,7 @@ export class DocumentAnalyzeService {
     private readonly ocrService: TesseractOcrService,
     private readonly textNormalization: TextNormalizationService,
     private readonly embeddingService: EmbeddingService,
+    private readonly clauseRepo: ClauseEmbeddingRepository,
   ) {}
 
   async analyze(pdfPath: string) {
@@ -26,12 +28,34 @@ export class DocumentAnalyzeService {
     // 4️⃣ Chunk por cláusulas
     const clauses = this.textNormalization.chunkByClauses(normalizedText);
 
+    const results: {
+      id: string;
+      preview: string;
+    }[] = [];
+
+
+    for (const clause of clauses) {
+      if (clause.text.length < 20) continue;
+
+       // 5️⃣ Embedding
+      const embedding = await this.embeddingService.embed(clause.text);
+
+      // 6️⃣ Persistência automática
+      const saved = await this.clauseRepo.saveClause(
+        clause.text,
+        embedding,
+      );
+
+      results.push({
+        id: saved.id,
+        preview: clause.text.substring(0, 120),
+      });
+    }
+
     // 5️⃣ Embeddings
-    return Promise.all(
-      clauses.map(async (clause) => ({
-        ...clause,
-        embedding: await this.embeddingService.embed(clause.text),
-      })),
-    );
+    return {
+      clausesProcessed: results.length,
+      clauses: results,
+    };
   }
 }

@@ -6,7 +6,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { DocumentAnalyzeService } from './services/document-analyze.service';
+import { DocumentAnalyzeService } from '../services/document-analyze.service';
 
 @Controller('document')
 export class DocumentController {

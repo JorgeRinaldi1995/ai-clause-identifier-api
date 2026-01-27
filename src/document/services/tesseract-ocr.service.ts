@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { exec } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import { OcrInterface } from './ocr.interface';
+import { OcrInterface } from '../interfaces/ocr.interface';
 
 @Injectable()
 export class TesseractOcrService implements OcrInterface {
