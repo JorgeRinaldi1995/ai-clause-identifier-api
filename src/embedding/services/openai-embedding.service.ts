@@ -1,10 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import type { EmbeddingProvider } from './embedding.interface';
+import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export class OpenAiEmbeddingService implements EmbeddingProvider {
-  private readonly endpoint = 'https://api.openai.com/v1/embeddings';
-  private readonly api_key = process.env.OPEN_AI_KEY
+  private readonly endpoint: string;
+  private readonly apiKey: string;
+  private readonly model: string;
+
+  constructor(private readonly configService: ConfigService) {
+    const openai = this.configService.get('openai');
+
+    this.endpoint = openai.endpoint;
+    this.apiKey = openai.apiKey;
+    this.model = openai.embeddingModel;
+  }
 
   async embed(text: string): Promise<number[]> {
     console.log('Text on embed method ::::', text);
@@ -15,11 +25,11 @@ export class OpenAiEmbeddingService implements EmbeddingProvider {
     const response = await fetch(this.endpoint, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.api_key}`,
+        'Authorization': `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'text-embedding-3-small',
+        model: this.model,
         input: text,
       }),
     });
