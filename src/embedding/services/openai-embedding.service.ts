@@ -21,7 +21,7 @@ export class OpenAiEmbeddingService implements EmbeddingProvider {
     if (!text || text.length < 10) {
       throw new Error('Text too short for embedding');
     }
-    
+    console.log('endpoint', this.endpoint);
     const response = await fetch(this.endpoint, {
       method: 'POST',
       headers: {

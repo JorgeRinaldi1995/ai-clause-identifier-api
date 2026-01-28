@@ -3,13 +3,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DocumentModule } from './document/document.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import databaseConfig from './config/database.config';
+import openAiConfig from './config/openai.config';
 
 @Module({
   imports: [
     DocumentModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig],
+      load: [databaseConfig, openAiConfig],
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
