@@ -1,1 +1,17 @@
 https://rocketee.rs/install-postgresql-pgvector-ubuntu
+
+PDF
+ ↓
+OCR
+ ↓
+Normalização
+ ↓
+Chunking
+ ↓
+Embedding
+ ↓
+Deduplication
+ ├─ SIM → reutiliza análise
+ └─ NÃO → LLM → persistência
+ ↓
+

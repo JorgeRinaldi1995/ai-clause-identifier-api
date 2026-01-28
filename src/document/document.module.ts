@@ -8,7 +8,6 @@ import { TesseractOcrService } from './services/tesseract-ocr.service';
 import { TextNormalizationService } from './services/text-normalization.service';
 import { DocumentAnalyzeService } from './services/document-analyze.service';
 
-
 import { FileStorageService } from 'src/storage/services/file-storage.service';
 import { StorageModule  } from 'src/storage/storage.module';
 
@@ -19,11 +18,13 @@ import { ClauseEmbeddingEntity } from './entities/clause-embedding.entity';
 
 import { ClauseEmbeddingRepository } from './repositories/clause-embedding.repository';
 
+import { DeduplicationModule } from 'src/deduplication/deduplication.module';
 
 @Module({
   imports: [
     StorageModule,
     EmbeddingModule,
+    DeduplicationModule,
     TypeOrmModule.forFeature([ClauseEmbeddingEntity]),
     MulterModule.registerAsync({
         imports: [StorageModule],

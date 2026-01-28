@@ -4,6 +4,7 @@ import { TesseractOcrService } from './tesseract-ocr.service';
 import { TextNormalizationService } from './text-normalization.service';
 import { EmbeddingService } from '../../embedding/services/embedding.service';
 import { ClauseEmbeddingRepository } from '../repositories/clause-embedding.repository';
+import { ClauseDeduplicationService } from '../../deduplication/services/clause-deduplication.service';
 
 @Injectable()
 export class DocumentAnalyzeService {
@@ -13,46 +14,64 @@ export class DocumentAnalyzeService {
     private readonly textNormalization: TextNormalizationService,
     private readonly embeddingService: EmbeddingService,
     private readonly clauseRepo: ClauseEmbeddingRepository,
+    private readonly deduplicationService: ClauseDeduplicationService,
   ) {}
 
   async analyze(pdfPath: string) {
-    // 1️⃣ PDF → imagens
+
     const images = await this.pdfToImage.convert(pdfPath);
-
-    // 2️⃣ OCR → texto bruto
     const rawText = await this.ocrService.extractText(images);
+    console.log('Raw Text', rawText);
 
-    // 3️⃣ Normalização
     const normalizedText = this.textNormalization.normalize(rawText);
+    console.log('Normalized Text', normalizedText);
 
-    // 4️⃣ Chunk por cláusulas
     const clauses = this.textNormalization.chunkByClauses(normalizedText);
+    console.log('Clauses Chunk', clauses);
 
     const results: {
       id: string;
       preview: string;
+      status: 'reused' | 'new';
+      similarity?: number;
     }[] = [];
-
 
     for (const clause of clauses) {
       if (clause.text.length < 20) continue;
 
-       // 5️⃣ Embedding
       const embedding = await this.embeddingService.embed(clause.text);
+      console.log('Embeddings:::', embedding);
 
-      // 6️⃣ Persistência automática
+      const dedup = await this.deduplicationService.findReusableClause(embedding);
+      console.log('Dedup:::', dedup);
+
+      if (dedup.reusable) {
+        results.push({
+          id: dedup.sourceClauseId!,
+          preview: clause.text.substring(0, 120),
+          status: 'reused',
+          similarity: dedup.similarity,
+        });
+
+        continue;
+      }
+
       const saved = await this.clauseRepo.saveClause(
         clause.text,
         embedding,
       );
 
+      console.log('Saved:::', saved);
+
       results.push({
         id: saved.id,
         preview: clause.text.substring(0, 120),
+        status: 'new',
       });
+
+      console.log('Final Results', results);
     }
 
-    // 5️⃣ Embeddings
     return {
       clausesProcessed: results.length,
       clauses: results,

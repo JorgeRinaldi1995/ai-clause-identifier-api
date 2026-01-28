@@ -8,7 +8,7 @@ import { OcrInterface } from '../interfaces/ocr.interface';
 export class TesseractOcrService implements OcrInterface {
 
   async extractText(images: string[]): Promise<string> {
-    console.log('Images --->', images);
+
     let text = '';
 
     for (const image of images) {

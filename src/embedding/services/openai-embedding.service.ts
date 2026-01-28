@@ -17,11 +17,11 @@ export class OpenAiEmbeddingService implements EmbeddingProvider {
   }
 
   async embed(text: string): Promise<number[]> {
-    console.log('Text on embed method ::::', text);
+
     if (!text || text.length < 10) {
       throw new Error('Text too short for embedding');
     }
-    console.log('endpoint', this.endpoint);
+
     const response = await fetch(this.endpoint, {
       method: 'POST',
       headers: {
@@ -41,7 +41,6 @@ export class OpenAiEmbeddingService implements EmbeddingProvider {
     }
 
     const data = await response.json();
-    console.log('Open AI embedding service::::', data);
 
     return data.data[0].embedding;
   }
