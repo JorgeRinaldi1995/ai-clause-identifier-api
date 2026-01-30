@@ -19,12 +19,14 @@ import { ClauseEmbeddingEntity } from './entities/clause-embedding.entity';
 import { ClauseEmbeddingRepository } from './repositories/clause-embedding.repository';
 
 import { DeduplicationModule } from 'src/deduplication/deduplication.module';
+import { AnalysisModule  } from 'src/analysis/analysis.module';
 
 @Module({
   imports: [
     StorageModule,
     EmbeddingModule,
     DeduplicationModule,
+    AnalysisModule,
     TypeOrmModule.forFeature([ClauseEmbeddingEntity]),
     MulterModule.registerAsync({
         imports: [StorageModule],

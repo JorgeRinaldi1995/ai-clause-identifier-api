@@ -8,7 +8,7 @@ export class ClauseEmbeddingRepository {
 
     async saveClause(text: string, embedding: number[]) {
         const vectorLiteral = `[${embedding.join(',')}]`;
-        console.log('PGVECTOR:', vectorLiteral.slice(0, 80));
+        
         const result = await this.dataSource.query(
             `
             INSERT INTO clause_embeddings (clause_text, embedding)

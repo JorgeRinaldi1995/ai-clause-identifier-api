@@ -5,6 +5,7 @@ import { TextNormalizationService } from './text-normalization.service';
 import { EmbeddingService } from '../../embedding/services/embedding.service';
 import { ClauseEmbeddingRepository } from '../repositories/clause-embedding.repository';
 import { ClauseDeduplicationService } from '../../deduplication/services/clause-deduplication.service';
+import { ClauseAnalysisService } from 'src/analysis/services/openai-clause-analysis.service';
 
 @Injectable()
 export class DocumentAnalyzeService {
@@ -15,6 +16,7 @@ export class DocumentAnalyzeService {
     private readonly embeddingService: EmbeddingService,
     private readonly clauseRepo: ClauseEmbeddingRepository,
     private readonly deduplicationService: ClauseDeduplicationService,
+    private readonly clauseAnalysisService: ClauseAnalysisService
   ) {}
 
   async analyze(pdfPath: string) {
@@ -54,6 +56,10 @@ export class DocumentAnalyzeService {
         });
 
         continue;
+      } else {
+        const analysis = await this.clauseAnalysisService.analyze(clause.text);
+
+        console.log('ANALYZES:::::::::::', analysis);
       }
 
       const saved = await this.clauseRepo.saveClause(
