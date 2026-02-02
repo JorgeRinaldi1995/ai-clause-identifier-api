@@ -1,8 +1,15 @@
-export interface ClauseAnalysisResult {
-  isAbusive: boolean;
-  confidence: number; // 0.0 → 1.0
-  category: string;
-  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
-  legalBasis: string[];
-  explanation: string;
+export class ClauseAnalysisResult {
+  clauseId: string;
+
+  abusive: boolean;
+
+  riskLevel: 'low' | 'medium' | 'high';
+
+  justification: string;
+
+  violatedPrinciples?: string[];
+
+  confidence: number; 
+
+  model: string;
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ClauseEmbeddingRepository } from '../../document/repositories/clause-embedding.repository';
+import { ClauseEmbeddingRepository } from '../../clause/repositories/clause-embedding.repository';
 import { ClauseDeduplicationResult } from '../dto/clause-deduplication.result';
 
 @Injectable()

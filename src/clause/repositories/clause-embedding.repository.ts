@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { ClauseEmbeddingEntity } from '../entities/clause-embedding.entity';
 
 @Injectable()
 export class ClauseEmbeddingRepository {

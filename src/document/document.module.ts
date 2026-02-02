@@ -9,36 +9,24 @@ import { TextNormalizationService } from './services/text-normalization.service'
 import { DocumentAnalyzeService } from './services/document-analyze.service';
 
 import { FileStorageService } from 'src/storage/services/file-storage.service';
-import { StorageModule  } from 'src/storage/storage.module';
+import { StorageModule } from 'src/storage/storage.module';
 
-import { EmbeddingModule } from 'src/embedding/embedding.module';
-
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ClauseEmbeddingEntity } from './entities/clause-embedding.entity';
-
-import { ClauseEmbeddingRepository } from './repositories/clause-embedding.repository';
-
-import { DeduplicationModule } from 'src/deduplication/deduplication.module';
-import { AnalysisModule  } from 'src/analysis/analysis.module';
+import { ClauseModule } from 'src/clause/clause.module';
 
 @Module({
   imports: [
     StorageModule,
-    EmbeddingModule,
-    DeduplicationModule,
-    AnalysisModule,
-    TypeOrmModule.forFeature([ClauseEmbeddingEntity]),
+    ClauseModule,
     MulterModule.registerAsync({
-        imports: [StorageModule],
-        inject: [FileStorageService],
-        useFactory: (fileStorage: FileStorageService) =>
-            fileStorage.getMulterOptions(),
+      imports: [StorageModule],
+      inject: [FileStorageService],
+      useFactory: (fileStorage: FileStorageService) =>
+        fileStorage.getMulterOptions(),
     }),
   ],
   controllers: [DocumentController],
   providers: [
     DocumentAnalyzeService,
-    ClauseEmbeddingRepository,
     PopplerPdfToImageService,
     TesseractOcrService,
     TextNormalizationService,

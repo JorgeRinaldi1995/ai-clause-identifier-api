@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ClauseAnalysisProvider } from './clause-analysis.interface';
 import { ClauseAnalysisResult } from '../dto/clause-analysis.result';
+import { ClauseAnalysisRequest } from '../dto/clause-analysis.request';
 import { BrazilianConsumerLawClausePrompt } from '../prompts/clause-analysis.prompt';
 
 @Injectable()
@@ -22,7 +23,7 @@ export class ClauseAnalysisService
     this.model = openai.chatModel;
   }
   
-  async analyze(clauseText: string): Promise<ClauseAnalysisResult> {
+  async analyze(request: ClauseAnalysisRequest): Promise<ClauseAnalysisResult> {
     console.log('PROMPT:::::', this.prompt);
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -35,7 +36,7 @@ export class ClauseAnalysisService
         temperature: 0.2,
         messages: [
           { role: 'system', content: this.prompt.system() },
-          { role: 'user', content: this.prompt.user(clauseText) },
+          { role: 'user', content: this.prompt.user(request.text) },
         ],
       }),
     });
@@ -46,7 +47,7 @@ export class ClauseAnalysisService
 
     const data = await response.json();
     const content = data.choices[0].message.content;
-
+    console.log('Analysis Content:::::::::::', content);
     return JSON.parse(content);
   }
 }

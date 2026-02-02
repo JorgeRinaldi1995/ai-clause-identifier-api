@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { BrazilianConsumerLawClausePrompt } from './prompts/clause-analysis.prompt';
-import { ClauseAnalysisService } from './services/openai-clause-analysis.service';
+import { ClauseAnalysisService } from './services/clause-analysis.service';
 
 @Module({
   providers: [
