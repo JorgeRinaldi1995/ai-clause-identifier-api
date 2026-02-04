@@ -26,21 +26,32 @@ export class DocumentAnalyzeService {
     const results: {
       id: string;
       preview: string;
-      status: 'reused' | 'new';
+      status: 'reused' | 'analyzed';
       similarity?: number;
+      analysis?: any 
     }[] = [];
 
     for (const clause of clauses) {
-      const result = await this.clauseProcessingService.process(clause.text);
+      const processingResult = await this.clauseProcessingService.process(clause.text);
 
-      if (!result) continue;
+      if (!processingResult) continue;
 
-      results.push({
-        id: result.clauseId,
-        preview: clause.text.substring(0, 120),
-        status: result.status,
-        similarity: result.similarity,
-      });
+      if (processingResult.status === 'reused') {
+        results.push({
+          id: processingResult.clauseId,
+          preview: clause.text.slice(0, 120),
+          status: 'reused',
+          similarity: processingResult.similarity,
+        });
+      }
+      if (processingResult.status === 'analyzed') {
+        results.push({
+          id: processingResult.clauseId,
+          preview: clause.text.slice(0, 120),
+          status: 'analyzed',
+          analysis: processingResult.analysis,
+        });
+      }
     }
 
     return {

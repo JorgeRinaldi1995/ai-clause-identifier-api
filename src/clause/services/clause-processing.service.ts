@@ -14,7 +14,8 @@ export class ClauseProcessingService {
   ) {}
 
   async process(text: string) {
-    if (text.length < 20) return null;
+    if (!text || text.trim().length < 20) return null;
+    
 
     // 1. Embedding
     const embedding = await this.embeddingService.embed(text);
@@ -40,7 +41,7 @@ export class ClauseProcessingService {
     });
     console.log('Result:::::', analysis);
     return {
-      status: 'new' as const,
+      status: 'analyzed' as const,
       clauseId: savedClause.id,
       analysis,
     };
