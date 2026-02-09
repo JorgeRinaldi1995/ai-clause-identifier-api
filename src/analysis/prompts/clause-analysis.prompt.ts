@@ -33,11 +33,12 @@ export class BrazilianConsumerLawClausePrompt
         Responda obrigatoriamente no seguinte formato JSON:
 
         {
+          "clauseId": string,
           "isAbusive": boolean,
           "confidence": number (0.0 a 1.0),
           "category": string,
           "riskLevel": "LOW" | "MEDIUM" | "HIGH",
-          "legalBasis": string[],
+          "violatedPrinciples": string[],
           "explanation": string
         }
         `.trim();

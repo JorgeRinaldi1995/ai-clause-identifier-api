@@ -14,20 +14,22 @@ export class ClauseProcessingService {
   ) {}
 
   async process(text: string) {
-    if (!text || text.trim().length < 20) return null;
+    if (!text || text.trim().length < 20) {
+      throw new Error('Clause text too short');
+    }
     
 
     // 1. Embedding
     const embedding = await this.embeddingService.embed(text);
 
     // 2. Deduplicação
-    const dedup = await this.deduplicationService.findReusableClause(embedding);
+    const reuse = await this.deduplicationService.findReusableClause(embedding);
 
-    if (dedup.reusable) {
+    if (reuse.reusable) {
       return {
-        status: 'reused' as const,
-        clauseId: dedup.sourceClauseId!,
-        similarity: dedup.similarity,
+        status: 'reused',
+        clauseId: reuse.clauseId!,
+        similarity: reuse.similarity!,
       };
     }
 
@@ -36,12 +38,11 @@ export class ClauseProcessingService {
 
     // 4. IA
     const analysis = await this.clauseAnalysisService.analyze({
-      clauseId: savedClause.id,
       text,
     });
     console.log('Result:::::', analysis);
     return {
-      status: 'analyzed' as const,
+      status: 'analyzed',
       clauseId: savedClause.id,
       analysis,
     };

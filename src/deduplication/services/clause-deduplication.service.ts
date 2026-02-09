@@ -8,7 +8,7 @@ export class ClauseDeduplicationService {
    * Threshold inicial seguro
    * Pode (e deve) ser ajustado após observar dados reais
    */
-  private readonly SIMILARITY_THRESHOLD = 0.92;
+  private readonly SIMILARITY_THRESHOLD = 0.85;
 
   constructor(
     private readonly clauseRepo: ClauseEmbeddingRepository,
@@ -28,9 +28,9 @@ export class ClauseDeduplicationService {
 
     if (bestMatch.similarity >= this.SIMILARITY_THRESHOLD) {
       return {
+        clauseId: bestMatch.id,
         reusable: true,
         similarity: bestMatch.similarity,
-        sourceClauseId: bestMatch.id,
       };
     }
 

@@ -3,7 +3,7 @@ import { DataSource } from 'typeorm';
 
 @Injectable()
 export class ClauseEmbeddingRepository {
-    constructor(private readonly dataSource: DataSource) { }
+    constructor(private readonly dataSource: DataSource) {}
 
     async saveClause(text: string, embedding: number[]) {
         const vectorLiteral = `[${embedding.join(',')}]`;

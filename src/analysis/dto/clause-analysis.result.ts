@@ -1,15 +1,17 @@
 export class ClauseAnalysisResult {
   clauseId: string;
 
-  abusive: boolean;
+  isAbusive: boolean;
 
-  riskLevel: 'low' | 'medium' | 'high';
+  riskLevel: "LOW" | "MEDIUM" | "HIGH";
 
   justification: string;
 
   violatedPrinciples?: string[];
 
-  confidence: number; 
+  confidence: number;
 
-  model: string;
+  explanation: string;
+
+  category: string;
 }
