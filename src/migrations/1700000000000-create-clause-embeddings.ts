@@ -4,12 +4,26 @@ export class CreateClauseEmbeddings1700000000000 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
+      CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+    `);
+
+    await queryRunner.query(`
+      CREATE EXTENSION IF NOT EXISTS vector;
+    `);
+
+    await queryRunner.query(`
       CREATE TABLE clause_embeddings (
-        id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
         clause_text TEXT NOT NULL,
+
         embedding VECTOR(1536) NOT NULL,
-        is_abusive BOOLEAN,
-        created_at TIMESTAMP DEFAULT NOW()
+
+        model VARCHAR(100) NOT NULL,
+
+        content_hash VARCHAR(64) NOT NULL UNIQUE,
+
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
     `);
 
@@ -22,6 +36,7 @@ export class CreateClauseEmbeddings1700000000000 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP TABLE clause_embeddings`);
+    await queryRunner.query(`DROP TABLE IF EXISTS clause_embeddings`);
   }
 }
+

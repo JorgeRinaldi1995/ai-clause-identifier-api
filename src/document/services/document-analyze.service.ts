@@ -23,36 +23,14 @@ export class DocumentAnalyzeService {
 
     const clauses = this.textNormalization.chunkByClauses(normalizedText);
 
-    const results: {
-      id: string;
-      preview: string;
-      status: 'reused' | 'analyzed';
-      similarity?: number;
-      analysis?: any 
-    }[] = [];
+    const results = [];
 
-    for (const clause of clauses) {
-      const processingResult = await this.clauseProcessingService.process(clause.text);
 
-      if (!processingResult) continue;
-
-      if (processingResult.status === 'reused') {
-        results.push({
-          id: processingResult.clauseId,
-          preview: clause.text.slice(0, 120),
-          status: 'reused',
-          similarity: processingResult.similarity,
-        });
-      }
-      if (processingResult.status === 'analyzed') {
-        results.push({
-          id: processingResult.clauseId,
-          preview: clause.text.slice(0, 120),
-          status: 'analyzed',
-          analysis: processingResult.analysis,
-        });
-      }
-    }
+    await Promise.all(
+      clauses.map(clause =>
+        this.clauseProcessingService.process(clause.text)
+      )
+    );
 
     return {
       clausesProcessed: results.length,

@@ -1,15 +1,17 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef  } from '@nestjs/common';
 import { BrazilianConsumerLawClausePrompt } from './prompts/clause-analysis.prompt';
 import { ClauseAnalysisService } from './services/clause-analysis.service';
-import { ClauseAnalysisRepository } from './repositories/clause-analysis.repository';
-import { ClauseAnalysisRepositoryResult } from './repositories/clause-analysis-result.repository';
+import { ClauseAnalysisResultRepository } from './repositories/clause-analysis-result.repository';
+import { OpenAiAdapter } from '../traits/openai.adapter';
+import { EmbeddingModule } from '../embedding/embedding.module';
 
 @Module({
+  imports: [EmbeddingModule],
   providers: [
     ClauseAnalysisService,
     BrazilianConsumerLawClausePrompt,
-    ClauseAnalysisRepository,
-    ClauseAnalysisRepositoryResult
+    ClauseAnalysisResultRepository,
+    OpenAiAdapter
   ],
   exports: [ClauseAnalysisService],
 })

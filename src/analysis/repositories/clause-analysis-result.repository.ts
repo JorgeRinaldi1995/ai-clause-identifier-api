@@ -2,31 +2,25 @@ import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 @Injectable()
-export class ClauseAnalysisRepositoryResult {
+export class ClauseAnalysisResultRepository {
   constructor(private readonly dataSource: DataSource) {}
 
   async saveAnalysisResult(data: {
-    clauseId: string,
+    clauseId: string;
     category: string;
     isAbusive: boolean;
     riskLevel: string;
     confidence: number;
     explanation: string;
     violatedPrinciples: string[];
+    model: string;
   }) {
-    const [row] = await this.dataSource.query(
+    await this.dataSource.query(
       `
-      INSERT INTO clause_analysis_results (
-        clause_id,
-        category,
-        is_abusive,
-        risk_level,
-        confidence,
-        explanation,
-        violated_principles
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-      RETURNING result_id, created_at
+      INSERT INTO clause_analysis_results
+        (clause_id, category, is_abusive, risk_level,
+         confidence, explanation, violated_principles, model)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8);
       `,
       [
         data.clauseId,
@@ -36,30 +30,23 @@ export class ClauseAnalysisRepositoryResult {
         data.confidence,
         data.explanation,
         data.violatedPrinciples,
+        data.model,
       ],
     );
-
-    return row;
   }
 
-  async findResultByClauseId(clauseId: string) {
-    const [row] = await this.dataSource.query(
+  async findLatestByClauseId(clauseId: string) {
+    const result = await this.dataSource.query(
       `
-      SELECT
-        category,
-        is_abusive AS "isAbusive",
-        risk_level AS "riskLevel",
-        confidence,
-        explanation,
-        violated_principles AS "violatedPrinciples"
+      SELECT *
       FROM clause_analysis_results
       WHERE clause_id = $1
       ORDER BY created_at DESC
-      LIMIT 1
+      LIMIT 1;
       `,
       [clauseId],
     );
 
-    return row ?? null;
+    return result[0] ?? null;
   }
 }

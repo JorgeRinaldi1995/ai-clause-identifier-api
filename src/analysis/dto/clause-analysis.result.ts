@@ -1,17 +1,18 @@
+export type RiskLevel = "LOW" | "MEDIUM" | "HIGH";
+
 export class ClauseAnalysisResult {
-  clauseId: string;
+  clauseId!: string;
 
-  isAbusive: boolean;
+  isAbusive!: boolean;
 
-  riskLevel: "LOW" | "MEDIUM" | "HIGH";
+  riskLevel!: RiskLevel;
 
-  justification: string;
+  explanation!: string;
 
   violatedPrinciples?: string[];
 
-  confidence: number;
+  confidence!: number;
 
-  explanation: string;
+  category!: string;
 
-  category: string;
 }

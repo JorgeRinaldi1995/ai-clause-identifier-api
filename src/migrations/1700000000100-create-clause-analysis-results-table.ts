@@ -3,8 +3,6 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 export class CreateClauseAnalysisResultsTable1700000000100
   implements MigrationInterface {
 
-  name = 'CreateClauseAnalysisResultsTable1700000000100';
-
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -12,18 +10,29 @@ export class CreateClauseAnalysisResultsTable1700000000100
 
     await queryRunner.query(`
       CREATE TABLE clause_analysis_results (
-        result_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-        clause_id uuid NOT NULL,
-        category varchar(100),
-        is_abusive boolean,
-        risk_level varchar(50),
-        confidence numeric,
-        explanation text,
-        violated_principles text[],
-        created_at timestamptz NOT NULL DEFAULT now(),
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+
+        clause_id UUID NOT NULL,
+
+        category VARCHAR(100),
+
+        is_abusive BOOLEAN,
+
+        risk_level VARCHAR(50),
+
+        confidence NUMERIC,
+
+        explanation TEXT,
+
+        violated_principles TEXT[],
+
+        model VARCHAR(100) NOT NULL,
+
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
         CONSTRAINT fk_clause_analysis_results_clause
           FOREIGN KEY (clause_id)
-          REFERENCES clause_analysis (id)
+          REFERENCES clause_embeddings (id)
           ON DELETE CASCADE
       );
     `);
