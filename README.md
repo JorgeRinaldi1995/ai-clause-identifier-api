@@ -36,19 +36,6 @@ The project follows a modular architecture inspired by:
 - Clear separation of concerns
 - Infrastructure-independent domain logic
 
-### Project Structure
-
-src/
-├── analysis/
-│ ├── services/
-│ ├── repositories/
-│ ├── prompts/
-│ └── dto/
-├── clause/
-├── embeddings/
-├── traits/
-└── shared/
-
 
 ---
 
@@ -61,7 +48,6 @@ src/
 - PostgreSQL
 - pgvector (vector similarity search)
 - TypeORM
-- Docker
 
 ---
 
