@@ -47,22 +47,25 @@ The project follows a modular architecture inspired by:
 - OpenAI API
 - PostgreSQL
 - pgvector (vector similarity search)
-- TypeORM
+- Tessaract OCR
 
 ---
 
 ## 🧠 How It Works
 
 ### 1️⃣ Clause Submission
-The API receives a contractual clause as input text.
+The API receives a contractual clause as pdf document.
 
-### 2️⃣ Embedding Generation
+### 2️⃣ PDF to text conversion
+The API convert PDF to PGN, then PNG to text using Tessaract OCR. After that the text content are normalized and separeted by chunks.
+
+### 3️⃣ Embedding Generation
 A vector embedding is generated to enable:
 - Semantic similarity search
 - Clause indexing
 - Vector-based retrieval
 
-### 3️⃣ AI Analysis
+### 4️⃣ AI Analysis
 The LLM evaluates the clause and returns:
 - Abusiveness detection
 - Risk classification
@@ -70,7 +73,7 @@ The LLM evaluates the clause and returns:
 - Violated principles
 - Confidence score
 
-### 4️⃣ Persistence Layer
+### 5️⃣ Persistence Layer
 Results are stored along with:
 - Content hash (SHA-256)
 - Model used
