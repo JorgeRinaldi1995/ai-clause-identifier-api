@@ -1,6 +1,6 @@
 # 🤖 AI Clause Analyser
 
-> [!WARNING]
+> [!NOTE]
 >This project is currently in active development.
 >You may find:
 >- Experimental modules
