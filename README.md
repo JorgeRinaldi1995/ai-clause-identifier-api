@@ -112,6 +112,31 @@ Contract auditing systems
 
 Consumer protection analysis tools
 
+## 🐳 Development Environment
+
+The project ships with a Docker-based dev environment (hot-reload API + Postgres with `pgvector`), so you don't need Node, Postgres, Poppler, or Tesseract installed locally.
+
+### Requirements
+- Docker
+- Docker Compose
+
+### Setup
+```bash
+cp .env.example .env
+# fill in OPEN_AI_KEY
+docker compose up --build
+```
+
+The API will be available at `http://localhost:3000` (or the `PORT` set in `.env`), and Postgres (with `pgvector`) at `localhost:5432`. Source files are bind-mounted, so `nest start --watch` picks up changes automatically.
+
+### Database migrations
+Migrations are not run automatically. With the containers up, run:
+```bash
+docker compose run --rm api npm run migration:run
+```
+
+Other available commands: `migration:revert`, `migration:generate`, `migration:create` (see `package.json`).
+
 ## 👨‍💻 Author
 
-Developed by Jorge Costa.
+Architected and Developed by Jorge Costa.
