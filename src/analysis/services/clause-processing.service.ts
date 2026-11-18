@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { EmbeddingService } from 'src/embedding/services/embedding.service';
-import { ClauseEmbeddingRepository } from 'src/embedding/repositories/clause-embedding.repository';
-import { ClauseAnalysisService } from 'src/analysis/services/clause-analysis.service';
+import { EmbeddingService } from './embedding.service';
+import { ClauseEmbeddingRepository } from '../repositories/clause-embedding.repository';
+import { ClauseAnalysisService } from './clause-analysis.service';
 
 @Injectable()
 export class ClauseProcessingService {
@@ -15,7 +15,6 @@ export class ClauseProcessingService {
     if (!text || text.trim().length < 20) {
       throw new Error('Clause text too short');
     }
-    
 
     // 1. Embedding
     const embedding = await this.embeddingService.embed(text);
@@ -24,9 +23,8 @@ export class ClauseProcessingService {
     const savedClause = await this.clauseRepo.saveClause(
       text,
       embedding,
-      'text-embedding-3-large',
+      this.embeddingService.modelName,
     );
-
 
     // 4. IA
     const analysis = await this.clauseAnalysisService.analyze({
@@ -34,7 +32,7 @@ export class ClauseProcessingService {
       text,
       embedding,
     });
-    
+
     return {
       clauseId: savedClause.id,
       ...analysis,

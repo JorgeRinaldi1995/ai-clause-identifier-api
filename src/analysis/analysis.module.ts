@@ -1,19 +1,27 @@
-import { Module, forwardRef  } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { BrazilianConsumerLawClausePrompt } from './prompts/clause-analysis.prompt';
 import { ClauseAnalysisService } from './services/clause-analysis.service';
+import { ClauseProcessingService } from './services/clause-processing.service';
+import { EmbeddingService } from './services/embedding.service';
+import { OpenAiEmbeddingService } from './services/openai-embedding.service';
+import { OpenAiChatAdapter } from './services/openai-chat.adapter';
 import { ClauseAnalysisResultRepository } from './repositories/clause-analysis-result.repository';
-import { OpenAiAdapter } from '../traits/openai.adapter';
-import { EmbeddingModule } from '../embedding/embedding.module';
+import { ClauseEmbeddingRepository } from './repositories/clause-embedding.repository';
 
 @Module({
-  imports: [EmbeddingModule],
   providers: [
+    ClauseProcessingService,
     ClauseAnalysisService,
     BrazilianConsumerLawClausePrompt,
     ClauseAnalysisResultRepository,
-    OpenAiAdapter
+    ClauseEmbeddingRepository,
+    EmbeddingService,
+    OpenAiChatAdapter,
+    {
+      provide: 'EmbeddingProvider',
+      useClass: OpenAiEmbeddingService,
+    },
   ],
-  exports: [ClauseAnalysisService],
+  exports: [ClauseProcessingService],
 })
 export class AnalysisModule {}
-

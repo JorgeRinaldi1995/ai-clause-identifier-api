@@ -1,33 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import * as fs from 'fs';
+
+const UPLOAD_DIR = '/tmp/uploads';
 
 @Injectable()
 export class FileStorageService {
+  constructor() {
+    fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+  }
+
   getMulterOptions() {
     return {
       storage: diskStorage({
-        destination: '/tmp/uploads',
-        filename: (req, file, callback) => {
-          const uniqueName =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          callback(
-            null,
-            `${file.fieldname}-${uniqueName}${extname(file.originalname)}`,
-          );
+        destination: UPLOAD_DIR,
+        filename: (req, file, cb) => {
+          const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, `${file.fieldname}-${unique}${extname(file.originalname)}`);
         },
       }),
-      fileFilter: (req, file, callback) => {
+      fileFilter: (req, file, cb) => {
         if (!file.mimetype.includes('pdf')) {
-          return callback(
-            new Error('Only PDF files are allowed'),
-            false,
-          );
+          return cb(new Error('Only PDF files allowed'), false);
         }
-        callback(null, true);
+        cb(null, true);
       },
       limits: {
-        fileSize: 10 * 1024 * 1024, // 10MB
+        fileSize: 10 * 1024 * 1024,
       },
     };
   }

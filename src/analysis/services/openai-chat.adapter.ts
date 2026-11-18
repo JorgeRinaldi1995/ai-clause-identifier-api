@@ -1,16 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class OpenAiAdapter {
-
+export class OpenAiChatAdapter {
   async chat(
     endpoint: string,
     apiKey: string,
     model: string,
     systemPrompt: string,
-    userPrompt: string
+    userPrompt: string,
   ): Promise<string> {
-
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
@@ -20,6 +18,7 @@ export class OpenAiAdapter {
       body: JSON.stringify({
         model,
         temperature: 0.2,
+        response_format: { type: 'json_object' },
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },

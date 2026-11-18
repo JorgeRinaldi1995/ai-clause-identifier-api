@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import type { EmbeddingProvider } from './embedding.interface';
-import { ConfigService } from '@nestjs/config'
+import type { EmbeddingProvider } from '../interfaces/embedding.interface';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class OpenAiEmbeddingService implements EmbeddingProvider {
@@ -16,8 +16,11 @@ export class OpenAiEmbeddingService implements EmbeddingProvider {
     this.model = openai.embeddingModel;
   }
 
-  async embed(text: string): Promise<number[]> {
+  get modelName(): string {
+    return this.model;
+  }
 
+  async embed(text: string): Promise<number[]> {
     if (!text || text.length < 10) {
       throw new Error('Text too short for embedding');
     }
@@ -25,7 +28,7 @@ export class OpenAiEmbeddingService implements EmbeddingProvider {
     const response = await fetch(this.endpoint, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({

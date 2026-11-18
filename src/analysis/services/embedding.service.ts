@@ -1,9 +1,8 @@
 import { Injectable, Inject } from '@nestjs/common';
-import type { EmbeddingProvider } from './embedding.interface';
+import type { EmbeddingProvider } from '../interfaces/embedding.interface';
 
 @Injectable()
 export class EmbeddingService {
-
   constructor(
     @Inject('EmbeddingProvider')
     private readonly provider: EmbeddingProvider,
@@ -15,5 +14,9 @@ export class EmbeddingService {
     }
 
     return this.provider.embed(text);
+  }
+
+  get modelName(): string {
+    return this.provider.modelName;
   }
 }

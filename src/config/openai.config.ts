@@ -4,4 +4,5 @@ export default registerAs('openai', () => ({
   apiKey: process.env.OPEN_AI_KEY,
   embeddingModel: 'text-embedding-3-small',
   endpoint: 'https://api.openai.com/v1/embeddings',
+  chatEndpoint: 'https://api.openai.com/v1/chat/completions',
 }));

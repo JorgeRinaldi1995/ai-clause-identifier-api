@@ -1,45 +1,58 @@
 import { Injectable } from '@nestjs/common';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import { PdfToImageInterface } from '../interfaces/pdf-to-image.interface';
+import * as crypto from 'crypto';
+import {
+  PdfToImageInterface,
+  PdfToImageResult,
+} from '../interfaces/pdf-to-image.interface';
 
 @Injectable()
 export class PopplerPdfToImageService implements PdfToImageInterface {
-
-  async convert(pdfPath: string): Promise<string[]> {
+  async convert(pdfPath: string): Promise<PdfToImageResult> {
     if (!fs.existsSync(pdfPath) || fs.statSync(pdfPath).size === 0) {
-
       throw new Error('PDF inválido');
     }
 
-    const outputDir = path.join('/tmp', `pdf_${Date.now()}`);
+    const outputDir = path.join(
+      '/tmp',
+      `pdf_${Date.now()}_${crypto.randomBytes(8).toString('hex')}`,
+    );
 
     fs.mkdirSync(outputDir, { recursive: true });
 
-    const outputPrefix = path.join(outputDir, 'page');
+    try {
+      const outputPrefix = path.join(outputDir, 'page');
 
-    const command = `pdftoppm -png "${pdfPath}" "${outputPrefix}"`;
+      await this.execFile('pdftoppm', ['-png', pdfPath, outputPrefix]);
 
-    await this.exec(command);
+      const images = fs
+        .readdirSync(outputDir)
+        .filter((f) => f.endsWith('.png'))
+        .map((f) => path.join(outputDir, f));
 
-    const images = fs
-      .readdirSync(outputDir)
-      .filter(f => f.endsWith('.png'))
-      .map(f => path.join(outputDir, f));
+      if (images.length === 0) {
+        throw new Error('Nenhuma imagem gerada');
+      }
 
-    if (images.length === 0) {
-      throw new Error('Nenhuma imagem gerada');
+      return { images, outputDir };
+    } catch (error) {
+      await this.cleanup(outputDir);
+      throw error;
     }
-
-    return images;
   }
 
-  private exec(command: string): Promise<void> {
+  async cleanup(outputDir: string): Promise<void> {
+    await fs.promises.rm(outputDir, { recursive: true, force: true });
+  }
+
+  private execFile(command: string, args: string[]): Promise<void> {
     return new Promise((resolve, reject) => {
-      exec(command, (error, stdout, stderr) => {
+      execFile(command, args, (error, stdout, stderr) => {
         if (error) {
           reject(new Error(stderr || error.message));
+          return;
         }
         resolve();
       });

@@ -7,21 +7,15 @@ import { PopplerPdfToImageService } from './services/poppler-pdf-to-image.servic
 import { TesseractOcrService } from './services/tesseract-ocr.service';
 import { TextNormalizationService } from './services/text-normalization.service';
 import { DocumentAnalyzeService } from './services/document-analyze.service';
+import { FileStorageService } from './services/file-storage.service';
 
-import { FileStorageService } from 'src/storage/services/file-storage.service';
-import { StorageModule } from 'src/storage/storage.module';
-
-import { ClauseModule } from 'src/clause/clause.module';
+import { AnalysisModule } from '../analysis/analysis.module';
 
 @Module({
   imports: [
-    StorageModule,
-    ClauseModule,
+    AnalysisModule,
     MulterModule.registerAsync({
-      imports: [StorageModule],
-      inject: [FileStorageService],
-      useFactory: (fileStorage: FileStorageService) =>
-        fileStorage.getMulterOptions(),
+      useFactory: () => new FileStorageService().getMulterOptions(),
     }),
   ],
   controllers: [DocumentController],
@@ -30,6 +24,7 @@ import { ClauseModule } from 'src/clause/clause.module';
     PopplerPdfToImageService,
     TesseractOcrService,
     TextNormalizationService,
+    FileStorageService,
   ],
 })
 export class DocumentModule {}
